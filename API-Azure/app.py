@@ -25,7 +25,7 @@ def swagger_json():
 
 
 # Configuração da documentação Swagger UI
-SWAGGER_URL = '/api/docs'  # URL para acessar a documentação Swagger
+SWAGGER_URL = '/api/azure'  # URL para acessar a documentação Swagger
 API_URL = '/static/swagger.json'  # URL onde sua API está disponível, que gera o JSON Swagger
 
 swaggerui_blueprint = get_swaggerui_blueprint(
