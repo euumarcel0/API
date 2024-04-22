@@ -1,0 +1,94 @@
+#!/bin/bash
+
+# Adicionar linha ao sources.list
+sudo sh -c 'echo "deb http://deb.debian.org/debian/ bullseye main" >> /etc/apt/sources.list'
+
+# Atualiza os pacotes do sistema
+sudo apt update
+
+# Atualiza os pacotes do sistema
+sudo apt upgrade -y
+
+# Instalação do git
+sudo apt install git -y
+
+# Instalação do Python 3 e pip
+sudo apt install python3 python3-pip -y
+
+# Instalação das dependências para o Docker
+sudo apt install apt-transport-https ca-certificates curl gnupg lsb-release software-properties-common -y
+
+# Adicionar a chave GPG do Docker
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+# Configurar o repositório estável do Docker
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Atualiza os pacotes do sistema para obter o Docker
+sudo apt update
+
+# Instalação do Docker Engine
+sudo apt install docker-ce docker-ce-cli containerd.io -y
+
+# Gerenciar o Docker como um usuário não root
+sudo usermod -aG docker $USER
+
+# Adicionar o diretório Docker ao caminho do sistema
+echo "export PATH=/usr/local/bin:\$PATH" >> ~/.bashrc
+source ~/.bashrc
+
+# Clonar o repositório do GitHub
+git clone https://github.com/euumarcel0/API.git
+
+# Entrar no diretório da API-AWS
+cd API/API-Aws
+
+# Criar Dockerfile para API-AWS
+sudo cat << EOF > Dockerfile_AWS
+# Use a imagem base do Python
+FROM python:3.8-slim
+
+# Define o diretório de trabalho como /app
+WORKDIR /app
+
+# Copie o conteúdo atual do diretório para /app no contêiner
+COPY . .
+
+# Instale as dependências da API-AWS
+RUN pip install -r requirements.txt
+
+# Executar a API-AWS
+CMD ["python", "app.py"]
+EOF
+
+# Construir e executar o contêiner Docker para a API-AWS
+sudo docker build -t api-aws -f Dockerfile_AWS .
+sudo docker run -d -p 8080:8080 -e PORT=8080 --name api-aws-container api-aws
+
+# Entrar no diretório da API-Azure
+cd ../API-Azure
+
+# Criar Dockerfile para API-Azure
+sudo cat << EOF > Dockerfile_Azure
+# Use a imagem base do Python
+FROM python:3.8-slim
+
+# Define o diretório de trabalho como /app
+WORKDIR /app
+
+# Copie o conteúdo atual do diretório para /app no contêiner
+COPY . .
+
+# Instale as dependências da API-Azure
+RUN pip install -r requirements.txt
+
+# Executar a API-Azure
+CMD ["python", "app.py"]
+EOF
+
+# Construir e executar o contêiner Docker para a API-Azure
+sudo docker build -t api-azure -f Dockerfile_Azure .
+sudo docker run -d -p 8181:8181 -e PORT=8181 --name api-azure-container api-azure
+
+# Finalização
+echo "As APIs foram iniciadas em contêineres Docker separados. API-AWS na porta 8080 e API-Azure na porta 8181."
