@@ -341,4 +341,6 @@ def destruir_recursos_azure():
 
 # Inicialização do servidor Flask
 if __name__ == '__main__':
-    app.run(debug=True, port=8081)
+    import os
+    port = int(os.environ.get('PORT', 8181))
+    app.run(debug=True, port=port, host='0.0.0.0')
