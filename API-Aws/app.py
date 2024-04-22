@@ -329,4 +329,4 @@ def destruir_recursos_aws():
 
 # Inicialização do servidor Flask
 if __name__ == '__main__':
-    app.run(debug=True, port=80)
+    app.run(debug=True, port=8080)
