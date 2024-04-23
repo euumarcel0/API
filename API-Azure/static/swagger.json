@@ -12,6 +12,33 @@
     }
   ],
   "paths": {
+    "/login": {
+      "post": {
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Informações para efetuar o Login na Azure",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties":
+            {
+            }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Login executado com sucesso"
+          },
+          "500": {
+            "description": "Erro ao fazer Login na Azure"
+          }
+        },
+        "tags": ["Azure"]
+      }
+    },
     "/azure/criar-grupo-recursos": {
       "post": {
         "summary": "Cria um Grupo de Recursos na Azure",

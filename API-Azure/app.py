@@ -132,6 +132,16 @@ def atualizar_endereco_tf(dados_variavel, diretorio):
         file.writelines(lines)
 # ----------------------------------------------------AZURE-----------------------------------------------------------#
 
+@app.route('/adminazure', methods=['POST', 'OPTIONS'])
+def fazer_login_azure():
+    terraform_dir = './azure/'
+    try:
+        # Execute o login e inicialize o terraform
+        subprocess.run('az login && terraform init', shell=True, cwd=terraform_dir)
+        return jsonify({"message": "Login realizado com sucesso!"}), 200
+    except subprocess.CalledProcessError as e:
+        return jsonify({"error": f"Erro ao fazer login na Azure: {e}"}), 500
+    
 # Endpoint para criar um Grupo de Recursos na Azure
 @app.route('/azure/criar-grupo-recursos', methods=['POST'])
 def criar_grupo_recursos_azure():

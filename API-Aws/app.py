@@ -132,13 +132,24 @@ def atualizar_endereco_tf(dados_variavel, diretorio):
         file.writelines(lines)
 
 # ----------------------------------------------------AWS-----------------------------------------------------------#
+    
+@app.route('/login', methods=['POST', 'OPTIONS'])
+def fazer_login_aws():
 
+    terraform_dir = './aws/'
+    
+    try:
+        subprocess.run('terraform init', shell=True, cwd=terraform_dir)
+        return jsonify({"message": "Login realizado com sucesso!"}), 200
+    except Exception as e:
+        return jsonify({"error": f"Erro ao fazer login na AWS: {e}"}), 500
+    
 @app.route('/aws/vpc', methods=['POST'])
 def criar_vpc():
     dados = request.json
     nome_vnet = dados['nome']
     endereco_usuario = dados['endereco']
-    endereco_vnet = "[" + "\"" + endereco_usuario + "\"" + "]"   
+    endereco_vnet = "\"" + endereco_usuario + "\""
     
     terraform_dir = './aws/'
     
@@ -151,32 +162,13 @@ def criar_vpc():
     except subprocess.CalledProcessError as e:
         return jsonify({"error": f"Erro ao criar VPC: {e}"}), 500
     
-# Endpoint para criar uma Subrede Privada na AWS
-@app.route('/aws/Subrede Privada', methods=['POST'])
-def criar_subrede_privada_aws():
-    dados = request.json
-    nome_subrede_privada = dados['nome']
-    endereco_subrede_privada = dados['endereco']
-    endereco_subpri = "[" + "\"" + endereco_subrede_privada + "\"" + "]" 
-    
-    terraform_dir = './aws/'
-    
-    atualizar_nomes_tf({"nome": "nome_subrede_privada_vpc", "valor": nome_subrede_privada}, terraform_dir)
-    atualizar_endereco_tf({"nome": "endereco_subrede_privada_vpc", "valor": endereco_subpri}, terraform_dir)
-    
-    try:
-        subprocess.run(['terraform', 'apply', '-auto-approve', '-target=aws_subnet.Subrede_Privada'], cwd=terraform_dir, check=True)
-        return jsonify({"message": "Subrede Privada criada com sucesso!"}), 200
-    except subprocess.CalledProcessError as e:
-        return jsonify({"error": f"Erro ao criar Subrede Privada: {e}"}), 500
-
 # Função para criar Subrede Pública na AWS
 @app.route('/aws/Subrede Pública', methods=['POST'])
 def criar_subrede_publica_aws():
     dados = request.json
     nome_subrede_publica = dados['nome']
     endereco_subrede_publica = dados['endereco']
-    endereco_subpub = "[" + "\"" + endereco_subrede_publica + "\"" + "]" 
+    endereco_subpub = "\"" + endereco_subrede_publica + "\""
     
     terraform_dir = './aws/'
     
@@ -188,6 +180,26 @@ def criar_subrede_publica_aws():
         return jsonify({"message": "Subrede Pública criada com sucesso!"}), 200
     except subprocess.CalledProcessError as e:
         return jsonify({"error": f"Erro ao criar Subrede Pública: {e}"}), 500
+    
+    # Endpoint para criar uma Subrede Privada na AWS
+
+@app.route('/aws/Subrede Privada', methods=['POST'])
+def criar_subrede_privada_aws():
+    dados = request.json
+    nome_subrede_privada = dados['nome']
+    endereco_subrede_privada = dados['endereco']
+    endereco_subpri = "\"" + endereco_subrede_privada + "\""
+    
+    terraform_dir = './aws/'
+    
+    atualizar_nomes_tf({"nome": "nome_subrede_privada_vpc", "valor": nome_subrede_privada}, terraform_dir)
+    atualizar_endereco_tf({"nome": "endereco_subrede_privada_vpc", "valor": endereco_subpri}, terraform_dir)
+    
+    try:
+        subprocess.run(['terraform', 'apply', '-auto-approve', '-target=aws_subnet.Subrede_Privada'], cwd=terraform_dir, check=True)
+        return jsonify({"message": "Subrede Privada criada com sucesso!"}), 200
+    except subprocess.CalledProcessError as e:
+        return jsonify({"error": f"Erro ao criar Subrede Privada: {e}"}), 500
 
 # Função para criar Gateway de Internet na AWS
 @app.route('/aws/Gateway', methods=['POST'])
@@ -254,7 +266,7 @@ def criar_grupo_seguranca_windows_aws():
 
 # Função para criar instância EC2 Linux na AWS
 @app.route('/aws/Máquina Virtual Windows', methods=['POST'])
-def criar_instancia_ec2_linux_aws():
+def criar_instancia_ec2_windows_aws():
     dados = request.json
     nome_maquina_virtual_windows = dados['nome']
     nome_usuario_windows = dados ['usuario']
@@ -274,7 +286,7 @@ def criar_instancia_ec2_linux_aws():
 
 # Função para criar instância EC2 Windows na AWS
 @app.route('/aws/Máquina Virtual Linux', methods=['POST'])
-def criar_instancia_ec2_windows_aws():
+def criar_instancia_ec2_linux_aws():
     dados = request.json
     nome_maquina_virtual_linux = dados['nome']
     nome_usuario_linux = dados ['usuario']

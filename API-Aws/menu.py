@@ -75,7 +75,7 @@
 }
 # Criar Balanceador de Carga na AWS:
 # Método: POST
-# Endpoint: /aws/Balanceador de Carga
+# Endpoint: /aws/Load Balancer
 # Corpo da Requisição (JSON):
 {
     "nome": "nome_balanceador_carga"

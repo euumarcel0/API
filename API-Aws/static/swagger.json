@@ -12,6 +12,33 @@
     }
   ],
   "paths": {
+    "/login": {
+      "post": {
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Informações para efetuar o Login na AWS",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties":
+            {
+            }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Login executado com sucesso"
+          },
+          "500": {
+            "description": "Erro ao fazer Login na AWS"
+          }
+        },
+        "tags": ["AWS"]
+      }
+    },
     "/aws/vpc": {
       "post": {
         "parameters": [

@@ -66,3 +66,7 @@ variable "nome_load_balancer_aws" {
   description = "Descricao da variavel nome_load_balancer_aws"
   default     = "sdadad"
 }
+variable "acces_key" {
+  description = "Descricao da variavel acces_key"
+  default     = "ASIA4MCRJ3IX7U7UU42Q"
+}
