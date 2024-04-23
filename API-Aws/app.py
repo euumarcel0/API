@@ -13,7 +13,7 @@ app = Flask(__name__)
 
 # Configuração do CORS para permitir solicitações de todas as origens para determinados endpoints
 CORS(app, resources={
-    r"/aws/*": {"origins": "*"}
+    r"/awss/*": {"origins": "*"}
 })
 
 @app.route('/swagger.json')
@@ -136,7 +136,7 @@ def atualizar_endereco_tf(dados_variavel, diretorio):
 @app.route('/login', methods=['POST', 'OPTIONS'])
 def fazer_login_aws():
 
-    terraform_dir = './aws/'
+    terraform_dir = './awss/'
     
     try:
         subprocess.run('terraform init', shell=True, cwd=terraform_dir)
@@ -151,7 +151,7 @@ def criar_vpc():
     endereco_usuario = dados['endereco']
     endereco_vnet = "\"" + endereco_usuario + "\""
     
-    terraform_dir = './aws/'
+    terraform_dir = './awss/'
     
     atualizar_nomes_tf({"nome": "nome_vpc", "valor": nome_vnet}, terraform_dir)
     atualizar_endereco_tf({"nome": "endereco_vpc", "valor": endereco_vnet}, terraform_dir)
@@ -170,7 +170,7 @@ def criar_subrede_publica_aws():
     endereco_subrede_publica = dados['endereco']
     endereco_subpub = "\"" + endereco_subrede_publica + "\""
     
-    terraform_dir = './aws/'
+    terraform_dir = './awss/'
     
     atualizar_nomes_tf({"nome": "nome_subrede_publica_aws", "valor": nome_subrede_publica}, terraform_dir)
     atualizar_endereco_tf({"nome": "endereco_subrede_publica_aws", "valor": endereco_subpub}, terraform_dir)
@@ -190,7 +190,7 @@ def criar_subrede_privada_aws():
     endereco_subrede_privada = dados['endereco']
     endereco_subpri = "\"" + endereco_subrede_privada + "\""
     
-    terraform_dir = './aws/'
+    terraform_dir = './awss/'
     
     atualizar_nomes_tf({"nome": "nome_subrede_privada_vpc", "valor": nome_subrede_privada}, terraform_dir)
     atualizar_endereco_tf({"nome": "endereco_subrede_privada_vpc", "valor": endereco_subpri}, terraform_dir)
@@ -207,7 +207,7 @@ def criar_gateway_internet_aws():
     dados = request.json
     nome_gateway = dados['nome']
     
-    terraform_dir = './aws/'
+    terraform_dir = './awss/'
     
     atualizar_nomes_tf({"nome": "nome_gateway", "valor": nome_gateway}, terraform_dir)
     try:
@@ -222,7 +222,7 @@ def criar_tabela_rotas_aws():
     dados = request.json
     nome_tabela_rotas = dados['nome']
     
-    terraform_dir = './aws/'
+    terraform_dir = './awss/'
     
     atualizar_nomes_tf({"nome": "nome_tabela_rotas", "valor": nome_tabela_rotas}, terraform_dir)
 
@@ -238,7 +238,7 @@ def criar_grupo_seguranca_linux_aws():
     dados = request.json
     nome_grupo_seguranca_linux = dados['nome']
     
-    terraform_dir = './aws/'
+    terraform_dir = './awss/'
     
     atualizar_nomes_tf({"nome": "nome_grupo_seguranca_linux_aws", "valor": nome_grupo_seguranca_linux}, terraform_dir)
 
@@ -254,7 +254,7 @@ def criar_grupo_seguranca_windows_aws():
     dados = request.json
     nome_grupo_seguranca_windows = dados['nome']
     
-    terraform_dir = './aws/'
+    terraform_dir = './awss/'
     
     atualizar_nomes_tf({"nome": "nome_grupo_seguranca_windows_aws", "valor": nome_grupo_seguranca_windows}, terraform_dir)
 
@@ -272,7 +272,7 @@ def criar_instancia_ec2_windows_aws():
     nome_usuario_windows = dados ['usuario']
     senha_usuario_winodws = dados['senha']
     
-    terraform_dir = './aws/'
+    terraform_dir = './awss/'
     
     atualizar_nomes_tf({"nome": "nome_maquina_virtual_windows_aws", "valor": nome_maquina_virtual_windows}, terraform_dir)
     atualizar_nomes_tf({"nome": "nome_usuario_windows_aws", "valor": nome_usuario_windows}, terraform_dir)
@@ -292,7 +292,7 @@ def criar_instancia_ec2_linux_aws():
     nome_usuario_linux = dados ['usuario']
     senha_usuario_linux = dados['senha']
     
-    terraform_dir = './aws/'
+    terraform_dir = './awss/'
     
     atualizar_nomes_tf({"nome": "nome_maquina_virtual_linux_aws", "valor": nome_maquina_virtual_linux}, terraform_dir)
     atualizar_nomes_tf({"nome": "nome_usuario_linux_aws", "valor": nome_usuario_linux}, terraform_dir)
@@ -310,7 +310,7 @@ def criar_load_balancer_aws():
     dados = request.json
     nome_load_balancer = dados['nome']
     
-    terraform_dir = './aws/'
+    terraform_dir = './awss/'
     
     atualizar_nomes_tf({"nome": "nome_load_balancer_aws", "valor": nome_load_balancer}, terraform_dir)
 
@@ -332,7 +332,7 @@ def criar_load_balancer_aws():
 # Endpoint para destruir recursos na AWS
 @app.route('/aws/destruir-recursos', methods=['POST'])
 def destruir_recursos_aws():
-    terraform_dir = './aws/'
+    terraform_dir = './awss/'
     try:
         subprocess.run(['terraform', 'destroy', '-auto-approve'], cwd=terraform_dir, check=True)
         return jsonify({"message": "Recursos na AWS destruídos com sucesso!"}), 200
