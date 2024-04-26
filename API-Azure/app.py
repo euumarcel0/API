@@ -4,8 +4,11 @@ from flask_swagger import swagger
 from flask_swagger_ui import get_swaggerui_blueprint
 from flasgger import Swagger, swag_from
 from flask_cors import CORS
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 import os, json
-import subprocess
+import subprocess, time
+
 
 
 # Inicialização do aplicativo Flask
@@ -132,14 +135,41 @@ def atualizar_endereco_tf(dados_variavel, diretorio):
         file.writelines(lines)
 # ----------------------------------------------------AZURE-----------------------------------------------------------#
 
-@app.route('/adminazure', methods=['POST', 'OPTIONS'])
+@app.route('/login', methods=['POST', 'OPTIONS'])
 def fazer_login_azure():
-    terraform_dir = './azure/'
+    terraform_dir = './Azure/'
     try:
         # Execute o login e inicialize o terraform
-        subprocess.run('az login && terraform init', shell=True, cwd=terraform_dir)
+        # Capture a saída do comando az login --use-device-code
+        process = subprocess.Popen('az login --use-device-code', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=terraform_dir)
+        stdout, stderr = process.communicate()
+        
+        # Extraia o código do dispositivo da saída
+        device_code = stdout.decode('utf-8').split(' ')[-1].strip()
+        
+        # Inicialize o driver do navegador
+        driver = webdriver.Chrome() # Certifique-se de que o chromedriver esteja no PATH ou especifique o caminho diretamente
+        
+        # Abra o navegador e navegue até a URL fornecida pelo Azure CLI
+        driver.get('https://microsoft.com/devicelogin')
+        time.sleep(5) # Aguarde um pouco para a página carregar
+        
+        # Insira o código do dispositivo na página
+        input_element = driver.find_element_by_name('code')
+        input_element.send_keys(device_code)
+        input_element.send_keys(Keys.RETURN)
+        
+        # Aguarde a autenticação ser concluída
+        time.sleep(10) # Ajuste este tempo conforme necessário
+        
+        # Feche o navegador
+        driver.quit()
+        
+        # Execute o comando terraform init
+        subprocess.run('terraform init', shell=True, cwd=terraform_dir)
+        
         return jsonify({"message": "Login realizado com sucesso!"}), 200
-    except subprocess.CalledProcessError as e:
+    except Exception as e:
         return jsonify({"error": f"Erro ao fazer login na Azure: {e}"}), 500
     
 # Endpoint para criar um Grupo de Recursos na Azure
@@ -351,6 +381,4 @@ def destruir_recursos_azure():
 
 # Inicialização do servidor Flask
 if __name__ == '__main__':
-    import os
-    port = int(os.environ.get('PORT', 8181))
-    app.run(debug=True, port=port, host='0.0.0.0')
+    app.run(debug=True)
