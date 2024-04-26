@@ -2,7 +2,7 @@
 // Função para criar recursos na Azure
 async function criarRecursosAzure(recurso, dados) {
   try {
-    const response = await fetch(`http://localhost:5000/azure/${recurso}`, {
+    const response = await fetch(`http://localhost:8181/azure/${recurso}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -612,7 +612,7 @@ document.querySelector(".modal-maquina-virtual-windows .enviar-btn-maquina-virtu
 // Função para criar recursos na AWS
 async function criarRecursosAWS(recurso, dados) {
   try {
-    const response = await fetch(`http://localhost:5000/aws/${recurso}`, {
+    const response = await fetch(`http://localhost:8080/aws/${recurso}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
