@@ -97,8 +97,24 @@ EOF
 
 # Construir e executar o contêiner Docker para a API-Azure
 sudo docker build -t api-azure -f Dockerfile_Azure .
-3
 
+# Instalar e configurar o Apache
+sudo apt install apache2 -y
+sudo nano /etc/apache2/sites-available/meusite.conf << EOF
+<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    ServerName meusite.local
+    DocumentRoot /var/www/html
 
-# Finalização
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+EOF
+
+sudo ln -s /etc/apache2/sites-available/meusite.conf /etc/apache2/sites-enabled/
+sudo systemctl restart apache2
+
+# Copiar o conteúdo do frontend para o diretório do Apache
+sudo cp -r /root/API/Front-end/* /var/www/html/
+
 echo "As APIs foram iniciadas em contêineres Docker separados. API-AWS na porta 8080 e API-Azure na porta 8181."
