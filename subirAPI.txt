@@ -88,15 +88,13 @@ COPY . .
 # Instale as dependências da API-Azure
 RUN pip install -r requirements.txt
 
-# Exponha a porta necessária (se a sua aplicação Flask estiver ouvindo em uma porta específica)
-# EXPOSE 5000
-
 # Comando para iniciar a API-Azure
 CMD ["python", "app.py"]
 EOF
 
 # Construir e executar o contêiner Docker para a API-Azure
 sudo docker build -t api-azure -f Dockerfile_Azure .
+sudo docker run -d -p 8181:8080 -e PORT=8181 --name api-azure-container api-azure
 
 # Instalar e configurar o Apache
 sudo apt install apache2 -y
