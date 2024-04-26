@@ -1,3 +1,10 @@
+# Projeto API Azure e AWS
+
+## Descrição
+Este projeto consiste em uma API Flask para gerenciar recursos na nuvem, especificamente na Microsoft Azure e na AWS. O código está estruturado para interagir com o Terraform, permitindo a criação, modificação e destruição de recursos de infraestrutura na Azure e na AWS.
+
+## Estrutura do Projeto
+
 - `app.py`: Este arquivo contém o código principal da API Flask, onde são definidos os endpoints para interagir com os recursos na Azure e na AWS.
 - `Azure/`: Este diretório contém os arquivos de configuração do Terraform para a criação dos recursos na Azure.
 - `AWS/`: Este diretório contém os arquivos de configuração do Terraform para a criação dos recursos na AWS.
